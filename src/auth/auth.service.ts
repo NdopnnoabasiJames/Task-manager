@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Delete,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -16,24 +21,44 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(payload:CreateUserDto): Promise<User> {
-    const {username, email, password} = payload
+  async signUp(createUserDto: CreateUserDto){
+    const { username, email, password } = createUserDto;
+
+    // Check for duplicate entries
+    const existingUser = await this.userModel.findOne({email});
+    if (existingUser) {
+      throw new BadRequestException('User with Email already exists');
+    }
+  
+    // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new this.userModel({ username, email, password: hashedPassword });
-    return newUser.save();
+    const newUser = new this.userModel({
+      username,
+      email,
+      password: hashedPassword,
+    });
+    const savedUser = await newUser.save();
+    return await {
+        _id: savedUser._id,
+        username: savedUser.username,
+        email: savedUser.email,
+        role: savedUser.role
+      }; // Exclude password from the returned object
   }
-
-  async logIn(loginUserDto: LoginUserDto): Promise<{ accessToken: string }> {
+  
+  async logIn(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto; // Destructure email and password from DTO
-
     const user = await this.userModel.findOne({ email });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
     const payload = { id: user._id, role: user.role }; // Include necessary user details in payload
-    const accessToken = this.jwtService.sign(payload); // Sign the payload to create a token
-    return { accessToken };
+    const accessToken = await this.jwtService.sign(payload); // Sign the payload to create a token
+
+    return {
+        message: `${user.username} is logged in successfully`,
+        access_token: accessToken,
+      };
   }
 
 }
