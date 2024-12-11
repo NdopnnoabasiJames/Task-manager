@@ -3,6 +3,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -10,7 +11,8 @@ import { JwtModule } from '@nestjs/jwt';
       isGlobal: true, // Makes the module globally available
     }),
     DatabaseModule,
-    AuthModule],
+    AuthModule,
+    TaskModule],
   controllers: [],
   providers: [],
 })
