@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory:(ConfigService:ConfigService) => ({
         secret: ConfigService.getOrThrow('JWT_SECRET'),
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '30m' }, //Token will last 30 minutes
       }),
     }),
     PassportModule,

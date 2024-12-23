@@ -15,7 +15,7 @@ export class TaskService {
   }
 
   async getTasks(userId: string): Promise<Task[]> {
-    return await this.taskModel.find({ user: userId }).populate('user', '-password').exec();
+    return await this.taskModel.find({ user: userId }).populate('user', '_id').exec();
   }
 
   async deleteTask(userId: string, taskId: string): Promise<void> {
