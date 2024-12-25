@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Query, Injectable, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { CreateTaskDto } from 'src/Dtos/task.dto';
 import { TaskStatus } from 'src/enums/taskStatus.enum';
 import { Task } from 'src/Schemas/task.schema';
+// import { Query } from '@nestjs/common';
 
 
 @Injectable()
@@ -30,17 +31,48 @@ export class TaskService {
 
 
   //Logic to update task Status
-  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
-    const task = await this.taskModel.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true },
-    );
+  async updateTaskStatus(taskId: string, status: TaskStatus): Promise<Task> {
+    if (!isValidObjectId(taskId)) throw new NotFoundException('Task with this id not found');
+    if (!Object.values(TaskStatus).includes(status)) {
+      throw new BadRequestException(`Invalid status value: ${status}`);
+    } 
 
-    if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
-    }
+    const task = await this.taskModel.findById(taskId);
 
-    return task;
+    if (!task) throw new NotFoundException('Task not found');
+
+    task.status = status;
+    return await task.save();
   }
+
+
+
+async getAllUserTasks(@Query() query: any, userId: string): Promise<Task[]> {
+  const { status, title, startDate, endDate } = query;
+
+  // Build a dynamic filter object
+  const filter: any = { user: userId }; // Ensure only tasks for the logged-in user are fetched
+
+  if (status) {
+    filter.status = status; // Match the exact status
+  }
+
+  if (title) {
+    filter.title = { $regex: title, $options: 'i' }; // Partial match, case-insensitive
+  }
+
+  if (startDate || endDate) {
+    filter.createdAt = {};
+    if (startDate) {
+      filter.createdAt.$gte = new Date(startDate); // Start date filter
+    }
+    if (endDate) {
+      filter.createdAt.$lte = new Date(endDate); // End date filter
+    }
+  }
+
+  // Fetch tasks based on the filter
+  return this.taskModel.find(filter).exec();
+}
+
 }
