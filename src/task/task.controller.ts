@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Delete, Param, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, Param, UseGuards, Req, UnauthorizedException, Patch } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from 'src/Dtos/task.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { TaskStatus } from 'src/enums/taskStatus.enum';
 
 @Controller('tasks')
 export class TaskController {
@@ -30,5 +31,13 @@ export class TaskController {
   async deleteTask(@Req() req, @Param('id') taskId: string) {
     const userId = req.user.id;
     return this.taskService.deleteTask(userId, taskId);
+  }
+
+  @Patch(':id/status')
+  async updateTaskStatus(
+    @Param('id') id: string,
+    @Body('status') status: TaskStatus,
+  ) {
+    return this.taskService.updateTaskStatus(id, status);
   }
 }

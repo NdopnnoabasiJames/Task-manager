@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateTaskDto } from 'src/Dtos/task.dto';
+import { TaskStatus } from 'src/enums/taskStatus.enum';
 import { Task } from 'src/Schemas/task.schema';
 
 
@@ -25,5 +26,21 @@ export class TaskService {
     if (task.user.toString() !== userId) throw new UnauthorizedException('Not authorized to delete this task');
 
     await this.taskModel.findByIdAndDelete(taskId);
+  }
+
+
+  //Logic to update task Status
+  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
+    const task = await this.taskModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true },
+    );
+
+    if (!task) {
+      throw new NotFoundException(`Task with ID ${id} not found`);
+    }
+
+    return task;
   }
 }
