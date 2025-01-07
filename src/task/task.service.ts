@@ -6,7 +6,6 @@ import { TaskStatus } from 'src/enums/taskStatus.enum';
 import { Task } from 'src/Schemas/task.schema';
 // import { Query } from '@nestjs/common';
 
-
 @Injectable()
 export class TaskService {
   constructor(@InjectModel(Task.name) private readonly taskModel: Model<Task>) {}
@@ -45,34 +44,14 @@ export class TaskService {
     return await task.save();
   }
 
+  async getTasksByStatus(userId: string, status?: TaskStatus): Promise<Task[]> {
+    const query: any = { user: userId };
 
-
-async getAllUserTasks(@Query() query: any, userId: string): Promise<Task[]> {
-  const { status, title, startDate, endDate } = query;
-
-  // Build a dynamic filter object
-  const filter: any = { user: userId }; // Ensure only tasks for the logged-in user are fetched
-
-  if (status) {
-    filter.status = status; // Match the exact status
-  }
-
-  if (title) {
-    filter.title = { $regex: title, $options: 'i' }; // Partial match, case-insensitive
-  }
-
-  if (startDate || endDate) {
-    filter.createdAt = {};
-    if (startDate) {
-      filter.createdAt.$gte = new Date(startDate); // Start date filter
+    if (status) {
+      query.status = status;
     }
-    if (endDate) {
-      filter.createdAt.$lte = new Date(endDate); // End date filter
-    }
-  }
 
-  // Fetch tasks based on the filter
-  return this.taskModel.find(filter).exec();
-}
+    return this.taskModel.find(query).exec();
+  }
 
 }
