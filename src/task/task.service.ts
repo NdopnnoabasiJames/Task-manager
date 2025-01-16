@@ -4,7 +4,6 @@ import { isValidObjectId, Model } from 'mongoose';
 import { CreateTaskDto } from 'src/Dtos/task.dto';
 import { TaskStatus } from 'src/enums/taskStatus.enum';
 import { Task } from 'src/Schemas/task.schema';
-// import { Query } from '@nestjs/common';
 
 @Injectable()
 export class TaskService {
@@ -16,7 +15,9 @@ export class TaskService {
   }
 
   async getTasks(userId: string): Promise<Task[]> {
-    return await this.taskModel.find({ user: userId }).populate('user', '_id').exec();
+    const userTasks = await this.taskModel.find({ user: userId }).select('-user').exec();
+    if (userTasks.length === 0) throw new NotFoundException('User has no tasks');
+    return userTasks;
   }
 
   async deleteTask(userId: string, taskId: string): Promise<void> {

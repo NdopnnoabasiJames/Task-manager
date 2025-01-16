@@ -34,7 +34,7 @@ export class TaskController {
   }
 
   // @UseGuards(AuthGuard)
-  @Get('getAllTasks')
+  @Get('getUserTasks')
   async getTasks(@Req() req) {
     const userId = req.user.id;
     return this.taskService.getTasks(userId);
