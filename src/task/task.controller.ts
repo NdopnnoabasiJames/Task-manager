@@ -42,7 +42,7 @@ export class TaskController {
   }
 
   // Route to delete a task by id
-  @Delete(':id')
+  @Delete('deleteTask/:id')
   async deleteTask(@Req() req, @Param('id') taskId: string) {
     const userId = req.user.id;
     return this.taskService.deleteTask(userId, taskId);

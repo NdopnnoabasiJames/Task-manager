@@ -17,19 +17,21 @@ export class TaskService {
   
   //Logic to get all user tasks
   async getTasks(userId: string): Promise<Task[]> {
-    const userTasks = await this.taskModel.find({ user: userId }).select('-user').exec();
+    const userTasks = await this.taskModel.find({ user: userId }).populate('user', '_id').exec();
     if (userTasks.length === 0) throw new NotFoundException('User has no tasks');
     return userTasks;
   }
 
   //Logic to delete task
-  async deleteTask(userId: string, taskId: string): Promise<void> {
+  async deleteTask(userId: string, taskId: string) {
     const task = await this.taskModel.findById(taskId);
 
     if (!task) throw new NotFoundException('Task not found');
-    if (task.user.toString() !== userId) throw new UnauthorizedException('Not authorized to delete this task');
+    if (task.user.toString() !== userId) throw new UnauthorizedException('Task does not belong to this user therefore not authorized to delete this task.');
 
     await this.taskModel.findByIdAndDelete(taskId);
+    return { message: 'Task deleted successfully' };
+
   }
 
 
