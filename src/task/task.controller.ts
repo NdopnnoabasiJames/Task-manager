@@ -22,7 +22,8 @@ import { Task } from 'src/Schemas/task.schema';
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  // @UseGuards(AuthGuard)
+
+  //Route to create a new task
   @Post('createTask')
   async createTask(@Req() req, @Body() createTaskDto: CreateTaskDto) {
     if (!req.user || !req.user.id) {
@@ -33,20 +34,21 @@ export class TaskController {
     return this.taskService.createTask(userId, createTaskDto);
   }
 
-  // @UseGuards(AuthGuard)
+  //Route to get all user tasks
   @Get('getUserTasks')
   async getTasks(@Req() req) {
     const userId = req.user.id;
     return this.taskService.getTasks(userId);
   }
 
-  // @UseGuards(AuthGuard)
+  // Route to delete a task by id
   @Delete(':id')
   async deleteTask(@Req() req, @Param('id') taskId: string) {
     const userId = req.user.id;
     return this.taskService.deleteTask(userId, taskId);
   }
 
+  // Route to update task status
   @Patch(':id/status')
   async updateTaskStatus(
     @Param('id') id: string,
@@ -55,7 +57,7 @@ export class TaskController {
     return this.taskService.updateTaskStatus(id, status);
   }
 
-  @Get('tasks')
+  @Get('GetTaskByStatus')
   async getTasksByStatus(
     @Query('status') status: TaskStatus,
     @Req() req: any, // Extract userId from the request

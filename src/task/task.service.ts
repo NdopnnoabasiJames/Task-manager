@@ -9,17 +9,20 @@ import { Task } from 'src/Schemas/task.schema';
 export class TaskService {
   constructor(@InjectModel(Task.name) private readonly taskModel: Model<Task>) {}
 
+  //Logic to create new task for a user.
   async createTask(userId: string, createTaskDto: CreateTaskDto): Promise<Task> {
     const newTask = new this.taskModel({ ...createTaskDto, user: userId });
     return await newTask.save();
   }
-
+  
+  //Logic to get all user tasks
   async getTasks(userId: string): Promise<Task[]> {
     const userTasks = await this.taskModel.find({ user: userId }).select('-user').exec();
     if (userTasks.length === 0) throw new NotFoundException('User has no tasks');
     return userTasks;
   }
 
+  //Logic to delete task
   async deleteTask(userId: string, taskId: string): Promise<void> {
     const task = await this.taskModel.findById(taskId);
 
@@ -45,6 +48,7 @@ export class TaskService {
     return await task.save();
   }
 
+  //Logic to get tasks by status
   async getTasksByStatus(userId: string, status?: TaskStatus): Promise<Task[]> {
     const query: any = { user: userId };
 
