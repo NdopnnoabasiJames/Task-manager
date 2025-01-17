@@ -60,5 +60,6 @@ export class TaskService {
 
     return this.taskModel.find(query).exec();
   }
+  
 
 }

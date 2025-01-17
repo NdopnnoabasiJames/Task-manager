@@ -16,6 +16,12 @@ export class User extends Document {
 
   @Prop({ type: String, enum: UserRole, default: UserRole.MEMBER })
   role: UserRole;
+
+  @Prop()
+  resetPasswordToken?: string; // Token for password reset
+
+  @Prop()
+  resetPasswordExpires?: Date; // Token expiration time
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

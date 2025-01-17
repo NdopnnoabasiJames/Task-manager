@@ -12,6 +12,7 @@ import { User } from '../schemas/user.schema';
 import { UserRole } from 'src/enums/userRole.enum';
 import { CreateUserDto } from 'src/Dtos/SignUp.dto';
 import { LoginUserDto } from 'src/Dtos/Login.dto';
+import * as crypto from 'crypto';
 
 
 @Injectable()
@@ -61,4 +62,24 @@ export class AuthService {
       };
   }
 
+  //Logic to reset forgotten password
+  async generateResetToken(email: string): Promise<void> {
+    // Check if the user exists
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new BadRequestException('User with this email does not exist');
+    }
+
+    // Generate a token
+    const token = crypto.randomBytes(20).toString('hex');
+
+    // Set token and expiration time
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    await user.save();
+
+    // TODO: Send the reset link to the user's email
+    console.log(`Password reset link: https://your-app/reset-password/${token}`);
+  }
 }
