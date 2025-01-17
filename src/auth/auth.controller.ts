@@ -1,4 +1,11 @@
-import { Controller, Post, Body, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  InternalServerErrorException,
+  Param,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/Dtos/SignUp.dto';
 import { LoginUserDto } from 'src/Dtos/Login.dto';
@@ -23,6 +30,26 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.logIn(loginUserDto);
-}
+  }
 
+  // Endpoint to handle "Forgot Password" requests
+  // The user provides their email, and a reset token is generated and sent to the email.
+  @Post('forgot-password')
+  async forgotPassword(
+    @Body('email') email: string,
+  ): Promise<{ message: string }> {
+    await this.authService.generateResetToken(email);
+    return { message: 'Password reset link sent to your email.' };
+  }
+
+  // Endpoint to handle password reset using a token
+  // The user provides the token (received via email) and a new password.
+  @Post('reset-password/:token')
+  async resetPassword(
+    @Param('token') token: string,
+    @Body('newPassword') newPassword: string,
+  ): Promise<{ message: string }> {
+    await this.authService.resetPassword(token, newPassword);
+    return { message: 'Password has been successfully reset.' };
+  }
 }

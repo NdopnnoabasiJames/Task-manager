@@ -62,7 +62,7 @@ export class AuthService {
       };
   }
 
-  //Logic to reset forgotten password
+  //Logic to generate the reset token for forgotten password
   async generateResetToken(email: string): Promise<void> {
     // Check if the user exists
     const user = await this.userModel.findOne({ email });
@@ -82,4 +82,28 @@ export class AuthService {
     // TODO: Send the reset link to the user's email
     console.log(`Password reset link: https://your-app/reset-password/${token}`);
   }
+
+  //Logic to reset password
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    // Find user by token and ensure it's not expired
+    const user = await this.userModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: new Date() }, // Ensure the token is not expired
+    });
+  
+    if (!user) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+  
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+    // Update the user's password and clear reset fields
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+  
+    await user.save();
+  }
+  
 }
