@@ -13,4 +13,4 @@ import { TaskModule } from './task/task.module';
     AuthModule,
     TaskModule],
 })
-export class AppModule {}
+export class AppModule {} // Module

@@ -7,12 +7,12 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 import { User } from '../schemas/user.schema';
 import { UserRole } from 'src/enums/userRole.enum';
 import { CreateUserDto } from 'src/Dtos/SignUp.dto';
 import { LoginUserDto } from 'src/Dtos/Login.dto';
 import * as crypto from 'crypto';
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
@@ -64,6 +64,8 @@ export class AuthService {
 
   //Logic to generate the reset token for forgotten password
   async generateResetToken(email: string): Promise<void> {
+
+    if (!email) throw new BadRequestException('No email provided');
     // Check if the user exists
     const user = await this.userModel.findOne({ email });
     if (!user) {
@@ -85,6 +87,9 @@ export class AuthService {
 
   //Logic to reset password
   async resetPassword(token: string, newPassword: string): Promise<void> {
+    if (!token || !newPassword) {
+      throw new BadRequestException('Token or password not provided');
+    }
     // Find user by token and ensure it's not expired
     const user = await this.userModel.findOne({
       resetPasswordToken: token,
@@ -95,8 +100,9 @@ export class AuthService {
       throw new BadRequestException('Invalid or expired reset token');
     }
   
+    const saltRounds = 10;
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
   
     // Update the user's password and clear reset fields
     user.password = hashedPassword;
