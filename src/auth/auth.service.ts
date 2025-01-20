@@ -82,12 +82,12 @@ export class AuthService {
     await user.save();
 
     // TODO: Send the reset link to the user's email
-    console.log(`Password reset link: https://your-app/reset-password/${token}`);
+    console.log(`Password reset ${token}`);
   }
 
   //Logic to reset password
   async resetPassword(token: string, newPassword: string): Promise<void> {
-    if (!token || !newPassword) {
+    if (!token && !newPassword) {
       throw new BadRequestException('Token or password not provided');
     }
     // Find user by token and ensure it's not expired
