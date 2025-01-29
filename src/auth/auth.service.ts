@@ -13,6 +13,7 @@ import { CreateUserDto } from 'src/Dtos/SignUp.dto';
 import { LoginUserDto } from 'src/Dtos/Login.dto';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
+import { MailService } from 'src/mail.service';
 
 
 @Injectable()
@@ -20,6 +21,7 @@ export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
+    private readonly mailService: MailService, // Inject mail service
   ) {}
 
   async signUp(createUserDto: CreateUserDto){
@@ -81,8 +83,8 @@ export class AuthService {
 
     await user.save();
 
-    // TODO: Send the reset link to the user's email
-    console.log(`Password reset token = ${token}`)
+    // Send the reset link to the user's email
+    await this.mailService.sendResetToken(email, token); // Send email
   }
 
   //Logic to reset password
