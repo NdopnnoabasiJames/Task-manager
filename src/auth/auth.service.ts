@@ -82,7 +82,7 @@ export class AuthService {
     await user.save();
 
     // TODO: Send the reset link to the user's email
-    console.log(`Password reset ${token}`);
+    console.log(`Password reset token = ${token}`)
   }
 
   //Logic to reset password
@@ -102,10 +102,10 @@ export class AuthService {
   
     const saltRounds = 10;
     // Hash the new password
+
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
   
-    // Update the user's password and clear reset fields
-    user.password = hashedPassword;
+    user.password = hashedPassword; //Assign the hashedpassword to the users password
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
   
