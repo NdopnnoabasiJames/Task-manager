@@ -24,12 +24,12 @@ export class MailService {
       to: email,
       subject: 'Password Reset Request',
       text: `Click the following link to reset your password: ${resetUrl}`,
-      html: `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`,
+      html: `<p>Your password reset token is ${token}. Thanks for choosing Deens Task management app</p>`,
     };
 
     try {
       await this.transporter.sendMail(mailOptions);
-      console.log(`Reset email sent to ${email}`);
+      console.log(`Reset email sent to ${email}, Check your spam folder if you can't find it in your main inbo`);
     } catch (error) {
       console.error('Error sending reset email:', error);
     }
