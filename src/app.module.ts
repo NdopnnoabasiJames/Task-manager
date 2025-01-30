@@ -3,7 +3,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TaskModule } from './task/task.module';
-import { MailService } from './mail.service';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -12,8 +12,11 @@ import { MailService } from './mail.service';
     }),
     DatabaseModule,
     AuthModule,
-    TaskModule],
-    providers: [MailService],
-    exports: [MailService]
+    TaskModule,
+    MailModule
+  ],
+
+    providers: [],
+    exports: []
 })
 export class AppModule {} // Module

@@ -13,7 +13,7 @@ import { CreateUserDto } from 'src/Dtos/SignUp.dto';
 import { LoginUserDto } from 'src/Dtos/Login.dto';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
-import { MailService } from 'src/mail.service';
+import { MailService } from 'src/mail/mail.service';
 
 
 @Injectable()
