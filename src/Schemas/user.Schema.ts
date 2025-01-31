@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { UserRole } from '../enums/userRole.enum';
 
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true })//Whats wrong with you man
 export class User extends Document {
   @Prop({ required: true, unique: true })
   username: string;
