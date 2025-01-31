@@ -6,12 +6,12 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from '../Schemas/user.schema';
 import { CreateUserDto } from '../Dtos/SignUp.dto';
 import { LoginUserDto } from '../Dtos/Login.dto';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { MailService } from '../mail/mail.service';
+import { User } from 'src/Schemas/user.schema';
 
 
 @Injectable()
