@@ -7,8 +7,8 @@ import {
   Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from 'src/Dtos/SignUp.dto';
-import { LoginUserDto } from 'src/Dtos/Login.dto';
+import { CreateUserDto } from '../Dtos/SignUp.dto';
+import { LoginUserDto } from '../Dtos/Login.dto';
 
 @Controller('auth')
 export class AuthController {

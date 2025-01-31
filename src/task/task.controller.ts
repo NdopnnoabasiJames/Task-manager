@@ -12,10 +12,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { CreateTaskDto } from 'src/Dtos/task.dto';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { TaskStatus } from 'src/enums/taskStatus.enum';
-import { Task } from 'src/Schemas/task.schema';
+import { CreateTaskDto } from '../Dtos/task.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { TaskStatus } from '../enums/taskStatus.enum';
+import { Task } from '../Schemas/task.schema';
 
 @Controller('tasks')
 @UseGuards(AuthGuard)

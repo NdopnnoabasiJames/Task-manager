@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
-import { TaskStatus } from 'src/enums/taskStatus.enum';
+import { TaskStatus } from '../enums/taskStatus.enum';
 
 
 export class CreateTaskDto {

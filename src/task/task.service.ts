@@ -1,9 +1,9 @@
 import { Query, Injectable, NotFoundException, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from 'mongoose';
-import { CreateTaskDto } from 'src/Dtos/task.dto';
-import { TaskStatus } from 'src/enums/taskStatus.enum';
-import { Task } from 'src/Schemas/task.schema';
+import { CreateTaskDto } from '../Dtos/task.dto';
+import { TaskStatus } from '../enums/taskStatus.enum';
+import { Task } from '../Schemas/task.schema';
 
 @Injectable()
 export class TaskService {
